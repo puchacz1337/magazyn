@@ -1,3 +1,5 @@
+using ConsoleApp6;
+
 List<Product> inventory = new List<Product>();
 bool exit = false;
 while (!exit)
@@ -121,3 +123,4 @@ while (!exit)
         Console.WriteLine($"Całkowita wartość magazynu: {totalValue:C}");
     }
 }
+
