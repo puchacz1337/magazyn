@@ -1,114 +1,123 @@
-﻿using System.Xml.Linq;
-
-List<int> ilosc = new List<int>();
-List<string> nazwa = new List<string>();
-List<double> cena = new List<double>();
-int option = 0;
-ilosc.Add(10);
-nazwa.Add("mleko");
-cena.Add(2.5);
-ilosc.Add(5);
-nazwa.Add("chleb");
-cena.Add(2);
-
-
-while (option != 6)
-
+List<Product> inventory = new List<Product>();
+bool exit = false;
+while (!exit)
 {
-    Console.WriteLine("Wybierz opcję:\r\n\r\n   1. Dodaj produkt\r\n\r\n   2. Usuń produkt\r\n\r\n   3. Wyświetl listę produktów\r\n\r\n   4. Aktualizuj produkt\r\n\r\n   5. Oblicz wartość magazynu\r\n\r\n   6. Wyjście");
-     option = Convert.ToInt32(Console.ReadLine());
+    Console.WriteLine("\nWybierz opcję:");
+    Console.WriteLine("1. dodaj produkt");
+    Console.WriteLine("2. usun produkt");
+    Console.WriteLine("3.wyswietl liste produktow");
+    Console.WriteLine("4.aktualizuj produkt");
+    Console.WriteLine("5. oblicz wartosc magazynu");
+    Console.WriteLine("6. wyjscie");
 
-    if (option == 1)
+    string choice = Console.ReadLine();
+    switch (choice)
     {
-        Console.WriteLine("Podaj nazwę produktu:");
-        nazwa.Add(Console.ReadLine());
-        Console.WriteLine("Podaj cenę produktu:");
-        cena.Add(Convert.ToDouble(Console.ReadLine()));
-        Console.WriteLine("Podaj ilość produktu:");
-        ilosc.Add(Convert.ToInt32(Console.ReadLine()));
-    }
-    else if (option == 2)
-    {
-        Console.WriteLine("Podaj nazwę produktu do usunięcia:");
-        string produkt = Console.ReadLine();
-        for (int i = 0; i < nazwa.Count; i++)
-        {
-            if (nazwa[i] == produkt)
-            {
-                nazwa.RemoveAt(i);
-                cena.RemoveAt(i);
-                ilosc.RemoveAt(i);
-                break;
-            }
-            else if (i == nazwa.Count - 1)
-            {
-                Console.WriteLine("Nie ma takiego produktu na liście");
-            }
-        }
-    }
-    else if (option == 3)
-    {
-        Console.WriteLine("Lista produktów:");
-        for (int i = 0; i < nazwa.Count; i++)
-        {
-            Console.WriteLine(i + 1 + ". " + nazwa[i] + " - " + cena[i] + "zł - " + ilosc[i] + "szt.");
-        }
-    }
-    else if (option == 4)
-    {
-        Console.WriteLine("Podaj nazwę produktu który chcesz zmienić:");
-        string produkt = Console.ReadLine();
-        for (int i = 0; i < nazwa.Count; i++)
-        {
-            if (nazwa[i] == produkt)
-            {
-                Console.WriteLine(" 1.nazwa\r\n\r\n 2.cena\r\n\r\n 3.ilość:");
-                int zmiana = Convert.ToInt32 (Console.ReadLine());
-                if (zmiana == 1)
-                {
-                    Console.WriteLine("Podaj nową nazwę produktu:");
-                    nazwa[i] = Console.ReadLine();
-                }
-                else if (zmiana == 2)
-                {
-                    Console.WriteLine("Podaj nową cenę produktu:");
-                    cena[i] = Convert.ToDouble(Console.ReadLine());
-                }
-                else if (zmiana == 3)
-                {
-                    Console.WriteLine("Podaj nową ilość produktu:");
-                    ilosc[i] = Convert.ToInt32(Console.ReadLine());
-                }
-                else
-                {
-                    Console.WriteLine("Nie ma takiej opcji.");
-                }
-                    break;
-            }
-            else if (i == nazwa.Count - 1)
-            {
-                Console.WriteLine("Nie ma takiego produktu na liście");
-            }
-        }
-    }
-    else if (option == 5)
-    {
-        double wartość = 0;
-        for (int i = 0; i < nazwa.Count; i++)
-        {
-            wartość += cena[i] * ilosc[i];
-        }
-        Console.WriteLine("Wartość magazynu wynosi: " + wartość + "zł");
-    }
-    else if (option == 6)
-    {
-        
-    }
+        case "1":
+            AddProduct(inventory);
+            break;
+        case "2":
+            RemoveProduct(inventory);
+            break;
+        case "3":
+            DisplayProducts(inventory);
+            break;
+        case "4":
+            UpdateProduct(inventory);
+            break;
+        case "5":
+            CalculateInventoryValue(inventory);
+            break;
+        case "6":
+            exit = true;
+            break;
 
-    else
-    {
-        Console.WriteLine("Nie ma takiej opcji.");
+
     }
-    
+    static void AddProduct(List<Product> inventory)
+    {
+        Console.Write("Podaj nazwe produktu:");
+        string name = Console.ReadLine();
+
+        Console.Write("podaj ilosc:");
+        int quantity = Convert.ToInt32(Console.ReadLine());
+
+
+        Console.Write("Podaj cenę: ");
+        string input = Console.ReadLine();
+
+        double price;
+        if (double.TryParse(input, out price))
+        {
+            Console.WriteLine($"Cena: {price}");
+        }
+
+        inventory.Add(new Product { Name = name, Quantity = quantity, UnitPrice = price });
+        Console.WriteLine("Produkt dodany!");
+    }
+    static void RemoveProduct(List<Product> inventory)
+    {
+        Console.Write("Podaj nazwe produktu:");
+        string name = Console.ReadLine();
+
+        Product productToRemove = inventory.Find(p => p.Name == name);
+        if (productToRemove != null)
+        {
+            inventory.Remove(productToRemove);
+            Console.WriteLine("Produkt usunięty!");
+        }
+        else
+        {
+            Console.WriteLine("Nie ma takiego produktu");
+        }
+    }
+    static void DisplayProducts(List<Product> inventory)
+    {
+        Console.WriteLine("\nLista produktów:");
+        foreach (var product in inventory)
+        {
+            Console.WriteLine($"Nazwa: {product.Name}, Ilość: {product.Quantity}, Cena: {product.UnitPrice:C}");
+        }
+    }
+    static void UpdateProduct(List<Product> inventory)
+    {
+        Console.Write("Podaj nazwę produktu ");
+        string name = Console.ReadLine();
+
+        Product productToUpdate = inventory.Find(p => p.Name == name);
+        if (productToUpdate != null)
+        {
+            Console.WriteLine("Co chcesz zaktualizować?");
+            Console.WriteLine("1. Ilość");
+            Console.WriteLine("2. Cenę");
+            Console.WriteLine("3. Oba");
+
+            string option = Console.ReadLine();
+            if (option == "1" || option == "3")
+            {
+                Console.Write("Podaj nową ilość: ");
+                productToUpdate.Quantity = Convert.ToInt32(Console.ReadLine());
+            }
+            if (option == "2" || option == "3")
+            {
+                Console.Write("Podaj nową cenę: ");
+                productToUpdate.UnitPrice = Convert.ToDouble(Console.ReadLine());
+            }
+
+            Console.WriteLine("zaktualizowane");
+        }
+        else
+        {
+            Console.WriteLine("nie ma takiego produktu");
+        }
+    }
+    static void CalculateInventoryValue(List<Product> inventory)
+    {
+        double totalValue = 0;
+        foreach (var product in inventory)
+        {
+            totalValue += product.Quantity * product.UnitPrice;
+        }
+        Console.WriteLine($"Całkowita wartość magazynu: {totalValue:C}");
+    }
 }
-
